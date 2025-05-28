@@ -1,0 +1,80 @@
+/* app/RotatingBoxes.module.css */
+
+/* No global reset here unless explicitly desired and managed (e.g., in global.css) */
+
+.wrapper {
+    width: 100%;
+    height: 60vh; /* Use 100vh for full viewport height */
+    display: flex;
+    justify-content: center;
+    align-items: flex-end; /* As per your original working layout for vertical alignment */
+    overflow: hidden; /* Prevents scrollbars during animations */
+    position: relative;
+}
+
+.container {
+    width: 600px;
+    height: 600px;
+    margin-bottom: -35vh; /* As per your original working layout */
+    transform: translateY(20%); /* As per your original working layout */
+    position: relative;
+    transform-origin: 50% 50%; /* Ensures rotation happens around the center */
+}
+
+/* Media query for responsiveness */
+@media only screen and (max-width: 600px) {
+
+  .wrapper {
+    height: 77vh;
+  }
+  
+  .container {
+      width: 800px;
+      height: 400px;
+      margin-bottom: -5vh;
+      transform: translateY(20%);
+      position: relative;
+    }
+}
+
+.svgPath {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    pointer-events: none; /* Allows clicks to pass through to elements behind it */
+}
+
+.box {
+    position: absolute;
+    width: 200px;
+    height: 300px;
+    /* CRITICAL: Do NOT set `top`, `left`, or `transform` (like translate) in CSS for .box */
+    /* GSAP's MotionPathPlugin in `useCarouselRotation` precisely handles the `x`, `y`, and `rotation` of these elements. */
+    /* Adding CSS transforms here would offset them and break the circular layout. */
+
+    display: flex; /* For centering content (e.g., "Box X" text) within the box */
+    justify-content: center;
+    align-items: center;
+    /* `color` and `text-shadow` will be set by GSAP in `useBoxStyling` for dynamic contrast */
+    /* Remove `background-color` property here; it will be replaced by `background-image` via GSAP */
+    border-radius: 20px;
+    user-select: none; /* Prevents accidental text selection */
+    box-sizing: border-box; /* Ensures padding and border are included in the element's total width/height */
+
+    /* Initial states, will be animated by GSAP. */
+    /* These CSS properties are starting points but will be fully overridden/managed by GSAP. */
+    opacity: 0;
+    z-index: 0;
+
+    /* REMOVED: No `perspective`, `transform-style`, `backface-visibility` because the flip effect is not being used. */
+    /* REMOVED: No `transition` properties for GSAP-controlled properties to avoid conflicts. */
+}
+
+/* REMOVED: The `.active` and `.active:hover` CSS classes are no longer needed */
+/* because all active/inactive/hover styling (including background, opacity, scale, shadow, filter) */
+/* is now dynamically controlled by GSAP within `useBoxStyling.js`. */
+
+/* REMOVED: The commented out `svg` rule as it's already defined with `.svgPath`. */
