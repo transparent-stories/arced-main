@@ -2,10 +2,10 @@ import axios from 'axios';
 
 const apiWP = axios.create({
     baseURL: process.env.NEXT_PUBLIC_WP_API_BASE_URL,
-    params: {
-        consumer_key: process.env.NEXT_PUBLIC_WP_CONSUMER_KEY,
-        consumer_secret: process.env.NEXT_PUBLIC_WP_CONSUMER_SECRET,
-    },
+    // params: {
+    //     consumer_key: process.env.NEXT_PUBLIC_WP_CONSUMER_KEY,
+    //     consumer_secret: process.env.NEXT_PUBLIC_WP_CONSUMER_SECRET,
+    // },
     timeout: 10000, // 10 seconds timeout
 });
 

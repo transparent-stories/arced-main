@@ -1,9 +1,7 @@
 
-import GsapMotionCarousel from "@/components/Home/GsapMotionCarousel";
-import ServicesSlider from "@/components/Home/ServicesSlider";
 import ServiceSliderPrac from "@/components/Home/ServiceSliderPrac";
 import { fetchFromApiWp } from "@/utils/api";
-import defaults from "@/utils/defaults";
+import parse from 'html-react-parser';
 
 async function getPageData(queryParams, id = "43") {
   try {
@@ -19,8 +17,8 @@ async function getPageData(queryParams, id = "43") {
 export async function generateMetadata() {
 
   try {
-    const title = "Genki Ramune Soda or japan ramune is cool fun drink from japan";
-    const description = "Japanese carbonated drinks are available in exciting fruit flavous and healthy ingredients. Turmeric ramune, Matcha ramune and Multivitamin ramune.";
+    const title = "ARCED";
+    const description = "Activation, Retail, Content, Event, Design";
 
     return {
       title,
@@ -40,69 +38,60 @@ export async function generateMetadata() {
 }
 
 export default async function Home() {
-  // const id = "43"; // Default to ID 43
+  const id = "43"; // Default to ID 43
   const queryParams = { _fields: "acf", acf_format: "standard", status: "publish" };
 
   try {
-    // const pageData = await getPageData(queryParams);
+    const pageData = await getPageData(queryParams);
 
     // Validate `acf` data existence
-    // if (!pageData?.acf) {
-    //   return <EmptyState message="Page Not Found" height="100vh" />;
-    // }
+    if (!pageData?.acf) {
+      return <EmptyState message="Page Not Found" height="100vh" />;
+    }
 
-    // const {
-    //   banner_button = null,
-    //   banner_heading = "Default Heading",
-    //   banner_image_desktop = defaults.images.desktop,
-    //   banner_image_mobile = defaults.images.mobile,
-    //   banner_text = "",
-    //   banner_url = "#",
-    //   product_list_title = "Products List Title",
-    //   product_list_subtitle = "",
-    //   brand_metrics_title = "Brand Milestones & Metrics",
-    //   brand_metrics_subtitle = "",
-    //   brand_metrics = [],
-    //   video_title = "Videos",
-    //   video_subtitle = "",
-    //   videos_feed = [],
-    // } = pageData?.acf;
+    const {
+      home_page_content = "Lorem Ipsum",
+      carousel_images = [
+        '/home/service1.jpg',
+        '/home/service2.jpg',
+        '/home/service3.jpg',
+        '/home/service4.jpg',
+        '/home/service5.jpg'
+      ],
+    } = pageData?.acf;
 
-    // const bannerProps = {
-    //   heading: banner_heading,
-    //   text: banner_text,
-    //   button: banner_button,
-    //   desktopImage: banner_image_desktop,
-    //   mobileImage: banner_image_mobile,
-    //   url: banner_url,
-    // };
+    const categories = [
+      { categoryIndex: 0, subText: 'ACTIVATIONS', url: '/service/activations' },
+      { categoryIndex: 1, subText: 'RETAIL', url: '/service/retail' },
+      { categoryIndex: 2, subText: 'CONTENT', url: '/service/content' },
+      { categoryIndex: 3, subText: 'EVENT', url: '/service/event' },
+      { categoryIndex: 4, subText: 'DESIGN', url: '/service/design' },
+    ];
 
-    // const productListProps = {
-    //   title: product_list_title,
-    //   subtitle: product_list_subtitle,
-    //   tag: "16", // Consider passing this dynamically
-    // };
+    // We want 9 objects total, cycling through images and categories
+    const totalObjects = 9;
 
-    // const brandMetricsProps = {
-    //   title: brand_metrics_title,
-    //   subtitle: brand_metrics_subtitle,
-    //   metrics: Array.isArray(brand_metrics) ? brand_metrics : [],
-    // };
+    const carouselResult = Array.from({ length: totalObjects }, (_, i) => {
+      const image = carousel_images[i % carousel_images.length];
+      const cat = categories[i % categories.length];
+      return {
+        image,
+        categoryIndex: cat.categoryIndex,
+        subText: cat.subText,
+        url: cat.url,
+      };
+    });
 
-    // const videoFeedProps = {
-    //   title: video_title,
-    //   subtitle: video_subtitle,
-    //   videos: Array.isArray(videos_feed) ? videos_feed : [],
-    // };
-
-    // const blogSectionProps = {
-    //   queryParams: { orderBy: "date", per_page: 3, _embed: "" }
-    // }
 
     return (
       <>
+        <div className="flex justify-center">
+          <div className="text-white opacity-50 text-center px-5 mt-5 text-sm sm:w-1/3">
+            {parse(home_page_content)}
+          </div>
+        </div>
         {/* <ServicesSlider /> */}
-        <ServiceSliderPrac />
+        <ServiceSliderPrac gallery={carouselResult} />
 
         {/* <GsapMotionCarousel /> */}
       </>

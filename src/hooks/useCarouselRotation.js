@@ -88,7 +88,7 @@ export const useCarouselRotation = (containerRef, totalSlides, step) => {
             zIndex: 1, // Base z-index
             scale: 1, // Base scale
             backgroundColor: '#c3c3c3', // Default inactive color
-            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.3)' // Default inactive shadow
+            // boxShadow: '0 4px 8px rgba(0, 0, 0, 0.3)' // Default inactive shadow
         });
 
         // Initialize Draggable instance only once
@@ -107,6 +107,8 @@ export const useCarouselRotation = (containerRef, totalSlides, step) => {
                 onThrowComplete: startAutoplay
             })[0]; // Draggable.create returns an array, we take the first instance
         }
+
+        startAutoplay();
 
         // Cleanup function for Draggable instance and autoplay tween
         return () => {

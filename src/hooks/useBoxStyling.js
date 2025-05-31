@@ -11,7 +11,7 @@ export const useBoxStyling = (boxRefs, activeIndex, boxImages) => { // Added box
             opacity: 1,
             zIndex: 10,
             scale: 1.2,
-            boxShadow: '0 8px 16px rgba(0, 0, 0, 0.5)',
+            // boxShadow: '0 8px 16px rgba(0, 0, 0, 0.5)',
             // Set filter to none for active box (full color)
             filter: 'grayscale(0%)',
             // Ensure text is readable over the image
@@ -22,7 +22,7 @@ export const useBoxStyling = (boxRefs, activeIndex, boxImages) => { // Added box
             opacity: 0.9,
             zIndex: 1,
             scale: 1,
-            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.3)',
+            // boxShadow: '0 4px 8px rgba(0, 0, 0, 0.3)',
             // Set filter to grayscale for inactive boxes
             filter: 'grayscale(100%)',
             // Ensure text is readable over the image
@@ -31,12 +31,12 @@ export const useBoxStyling = (boxRefs, activeIndex, boxImages) => { // Added box
         };
         const activeHoverProps = {
             scale: 1.25, // Slightly larger than activeScale
-            boxShadow: '0 12px 24px rgb(24, 33, 108, 0.6)', // More pronounced shadow
+            // boxShadow: '0 12px 24px rgb(24, 33, 108, 0.6)', // More pronounced shadow
             cursor: "pointer",
         };
         const inactiveHoverProps = {
             scale: 1.05, // Slightly larger than inactiveScale
-            boxShadow: '0 6px 12px rgba(0, 0, 0, 0.4)', // Slightly more pronounced shadow
+            // boxShadow: '0 6px 12px rgba(0, 0, 0, 0.4)', // Slightly more pronounced shadow
             cursor: "pointer",
         };
 
@@ -68,10 +68,11 @@ export const useBoxStyling = (boxRefs, activeIndex, boxImages) => { // Added box
             // Set the background image once when the component mounts/updates
             // This is done using GSAP's .set() for consistency
             gsap.set(box, {
-                backgroundImage: `url(${boxImages[i]})`, // Set the specific image
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                backgroundRepeat: 'no-repeat',
+                // backgroundImage: `url(${boxImages[i]})`, // Set the specific image
+                backgroundColor: "#00000000",
+                // backgroundSize: 'cover',
+                // backgroundPosition: 'center',
+                // backgroundRepeat: 'no-repeat',
             });
 
             // Apply base active/inactive styles
