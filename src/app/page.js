@@ -1,4 +1,5 @@
 
+import { EmptyState } from "@/components/Global/States";
 import ServiceSliderPrac from "@/components/Home/ServiceSliderPrac";
 import { fetchFromApiWp } from "@/utils/api";
 import parse from 'html-react-parser';
