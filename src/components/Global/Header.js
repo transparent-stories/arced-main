@@ -13,12 +13,12 @@ const menu = [
         link: "/"
     },
     {
-        title: "Contact",
-        link: "/contact-us"
+        title: "About Us",
+        link: "/about"
     },
     {
-        title: "ARCED",
-        link: "/"
+        title: "Contact",
+        link: "/contact-us"
     }
 ];
 
@@ -39,7 +39,7 @@ const socials = [
 
 const Header = () => {
     return (
-        <header className="sm:px-20 py-5 font-bold flex justify-between items-center bg-black text-white sticky top-0 z-20">
+        <header className="px-5 sm:px-20 py-5 font-bold flex justify-between items-center bg-black text-white z-20">
             {/* Flyout Menu on the left */}
             <FlyoutMenu menuItems={menu} />
 
@@ -48,9 +48,11 @@ const Header = () => {
                 <Image
                     src="/logo.webp"
                     alt="ARCED logo"
-                    width={200}
+                    // sizes="(max-width: 768px) 200px, (max-width: 1200px) 300px, 300px"
+                    width={300}
                     height={250}
-                    className="transition-transform duration-500 transform hover:scale-110 fill-green"
+                    className="transition-transform ml-16 duration-500 transform hover:scale-110 fill-green
+                    w-52 h-auto sm:w-40 md:w-48 lg:w-60 xl:w-60"
                 />
             </Link>
 
