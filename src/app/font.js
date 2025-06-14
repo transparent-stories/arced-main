@@ -5,7 +5,7 @@ const brother = localFont({
         {
             path: 'fonts/brother-1816-black.ttf',
             weight: '900',
-            style: 'bold'
+            style: 'bold',
         }
     ],
     variable: '--font-brother'
