@@ -14,7 +14,7 @@ const brother = localFont({
 const cera = localFont({
     src: [
         {
-            path: './fonts/Cera.otf',
+            path: './fonts/Cera-1.otf',
             weight: '500',
             style: 'regular',
         }
