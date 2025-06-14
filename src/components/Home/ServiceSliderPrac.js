@@ -82,6 +82,47 @@ export default function ServiceSliderPrac({ gallery }) {
         return () => window.removeEventListener('resize', updateSliderPosition);
     }, [updateSliderPosition]);
 
+    const touchStartX = useRef(0);
+    const touchStartY = useRef(0);
+    const isTouching = useRef(false);
+    const touchMoveThreshold = 10; // Pixels allowed for a "tap" before it's considered a drag
+
+    const handleTouchStart = (e) => {
+        // Prevent default to avoid 300ms delay and potential double-tap zoom,
+        // but be careful if you have native scrolling you want to preserve.
+        // For a clickable card, preventing default is usually fine.
+        // e.preventDefault(); // Uncomment if preventing default helps consistently, but test thoroughly!
+
+        isTouching.current = true;
+        touchStartX.current = e.touches[0].clientX;
+        touchStartY.current = e.touches[0].clientY;
+    };
+
+    const handleTouchMove = (e) => {
+        if (!isTouching.current) return;
+
+        const currentX = e.touches[0].clientX;
+        const currentY = e.touches[0].clientY;
+
+        const deltaX = Math.abs(currentX - touchStartX.current);
+        const deltaY = Math.abs(currentY - touchStartY.current);
+
+        if (deltaX > touchMoveThreshold || deltaY > touchMoveThreshold) {
+            // If the finger moved too much, it's a scroll/drag, not a tap.
+            isTouching.current = false; // Reset to prevent tap on touchend
+        }
+        // No e.preventDefault() here unless you want to prevent scrolling while touching the card
+    };
+
+    const handleTouchEnd = (index) => (e) => {
+        if (isTouching.current) {
+            // It was a valid tap (finger didn't move too much)
+            handleCardInteraction(index);
+        }
+        isTouching.current = false; // Always reset
+    };
+
+
 
     const handleCardInteraction = (index) => {
         if (index === activeIndex) {
@@ -178,6 +219,9 @@ export default function ServiceSliderPrac({ gallery }) {
                                 transition={{ duration: 0.4, type: 'spring', stiffness: 100, damping: 20 }}
                                 style={{ transformStyle: 'preserve-3d' }}
                                 onClick={() => handleCardInteraction(i)}
+                                onTouchStart={handleTouchStart}
+                                onTouchMove={handleTouchMove}
+                                onTouchEnd={handleTouchEnd(i)}
                                 onAnimationComplete={() => {
                                     if (flippedIndex === i) {
                                         setFlippedIndex(null);
