@@ -3,7 +3,7 @@ import localFont from 'next/font/local'
 const brother = localFont({
     src: [
         {
-            path: 'fonts/brother-1816-black.ttf',
+            path: './fonts/Brother-1816.ttf',
             weight: '900',
             style: 'bold',
         }
@@ -14,7 +14,7 @@ const brother = localFont({
 const cera = localFont({
     src: [
         {
-            path: 'fonts/cera.otf',
+            path: './fonts/Cera.otf',
             weight: '500',
             style: 'regular',
         }
