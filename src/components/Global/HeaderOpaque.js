@@ -37,9 +37,9 @@ const socials = [
     }
 ];
 
-const Header = () => {
+const HeaderOpaque = () => {
     return (
-        <header className="px-5 sm:px-20 py-5 font-bold flex justify-between items-center bg-transparent absolute top-0 w-full text-white z-20">
+        <header className="px-5 sm:px-20 py-5 font-bold flex justify-between items-center bg-black w-full text-white z-20">
             {/* Flyout Menu on the left */}
             <FlyoutMenu menuItems={menu} />
 
@@ -128,4 +128,4 @@ const SocialButtons = ({ socialItems }) => {
     );
 };
 
-export default Header;
+export default HeaderOpaque;

@@ -58,6 +58,35 @@ export const useCarouselRotation = (containerRef, totalSlides, step) => {
         }
     }, []);
 
+    // New function to programmatically navigate to a specific slide index
+    const goToIndex = useCallback((targetIndex) => {
+        stopAutoplay(); // Stop autoplay when manually navigating
+
+        const containerElement = containerRef.current;
+        if (!containerElement) return;
+
+        // Calculate the target rotation to bring the targetIndex to the active position (0 degrees)
+        // Assuming box 0 is active at 0 degrees, box 1 at -step, etc.
+        const requiredRotation = -targetIndex * step;
+
+        // Animate the container to the new rotation
+        gsap.to(containerElement, {
+            rotation: requiredRotation,
+            duration: 0.8, // Adjust duration for smooth transition
+            ease: "power2.out",
+            onUpdate: () => {
+                const currentAnimatedRotation = gsap.getProperty(containerElement, 'rotation');
+                setActiveIndex(calculateActiveIndex(currentAnimatedRotation));
+            },
+            onComplete: () => {
+                // Ensure the activeIndex is correctly set at the end of the animation
+                setActiveIndex(targetIndex);
+                startAutoplay(); // Resume autoplay after navigation
+            }
+        });
+    }, [containerRef, step, calculateActiveIndex, startAutoplay, stopAutoplay]);
+
+
     // Initializes Draggable and sets up motion path for boxes
     useEffect(() => {
         const path = document.getElementById('myPath');
@@ -66,32 +95,27 @@ export const useCarouselRotation = (containerRef, totalSlides, step) => {
             return;
         }
 
-        // Use a direct class selector for boxes, as the component will render them with this class
         const boxes = gsap.utils.toArray(containerRef.current.querySelectorAll('.box'));
         const boxesAmount = boxes.length;
 
-        // Ensure container rotation is reset and box props are cleared on mount
         gsap.set(containerRef.current, { rotation: 0 });
         gsap.set(boxes, { clearProps: "all" });
 
-        // Initial setup for boxes along the path
         gsap.set(boxes, {
             motionPath: {
                 path: path,
                 align: path,
                 alignOrigin: [0.5, 0.5],
-                start: -0.25, // Box 0 starts at 12 o'clock
-                end: (i) => i / boxesAmount - 0.25, // Distribute boxes evenly
+                start: -0.25,
+                end: (i) => i / boxesAmount - 0.25,
                 autoRotate: true
             },
-            opacity: 0.7, // Initial opacity for inactive boxes
-            zIndex: 1, // Base z-index
-            scale: 1, // Base scale
-            backgroundColor: '#c3c3c3', // Default inactive color
-            // boxShadow: '0 4px 8px rgba(0, 0, 0, 0.3)' // Default inactive shadow
+            opacity: 0.7,
+            zIndex: 1,
+            scale: 1,
+            backgroundColor: '#c3c3c3',
         });
 
-        // Initialize Draggable instance only once
         if (!draggableInstanceRef.current) {
             draggableInstanceRef.current = Draggable.create(containerRef.current, {
                 type: 'rotation',
@@ -105,12 +129,11 @@ export const useCarouselRotation = (containerRef, totalSlides, step) => {
                     setActiveIndex(calculateActiveIndex(this.rotation));
                 },
                 onThrowComplete: startAutoplay
-            })[0]; // Draggable.create returns an array, we take the first instance
+            })[0];
         }
 
         startAutoplay();
 
-        // Cleanup function for Draggable instance and autoplay tween
         return () => {
             if (draggableInstanceRef.current) {
                 draggableInstanceRef.current.kill();
@@ -120,13 +143,12 @@ export const useCarouselRotation = (containerRef, totalSlides, step) => {
                 rotationTweenRef.current.kill();
                 rotationTweenRef.current = null;
             }
-            // Clear props on all boxes and container during unmount
             gsap.set(boxes, { clearProps: "all" });
             if (containerRef.current) {
                 gsap.set(containerRef.current, { clearProps: "rotation" });
             }
         };
-    }, [containerRef, totalSlides, step, calculateActiveIndex, startAutoplay, stopAutoplay]); // Dependencies
+    }, [containerRef, totalSlides, step, calculateActiveIndex, startAutoplay, stopAutoplay, goToIndex]); // Added goToIndex to dependencies
 
-    return { activeIndex, startAutoplay, stopAutoplay, draggableInstance: draggableInstanceRef.current };
+    return { activeIndex, startAutoplay, stopAutoplay, goToIndex, draggableInstance: draggableInstanceRef.current };
 };

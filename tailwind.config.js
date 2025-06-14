@@ -7,18 +7,14 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        cream: '#FFFBEB',
-        green: '#0B680D',
-        olive: '#5C9559',
-        red: '#D41357',
-        pink: '#FFA6C4',
-        orange: '#F2501F',
-        purple: '#5A31F4',
-        black: '#000000'
+        sky: '#53d2f4',
+        orange: '#eb925d',
+        pink: '#d80170',
+        blue: '#072468'
       },
       fontFamily: {
-        sora: ["var(--font-sora)"],
-        sentient: ["var(--font-sentient)"]
+        cera: ["var(--font-cera)"],
+        brother: ["var(--font-brother)"]
       }
     },
   },

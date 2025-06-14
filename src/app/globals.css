@@ -4,7 +4,7 @@
 
 /* Add custom global styles if needed */
 body {
-  font-family: "sora", sans-serif;
+  font-family: "cera", sans-serif;
   font-weight: lighter;
   font-size: large;
   background-color: black;
@@ -14,7 +14,7 @@ body {
 }
 
 h1, h2, h3 {
-  font-family: 'Sentient', sans-serif; /* Use custom Sentient font for headings */
+  font-family: 'brother', sans-serif; /* Use custom Sentient font for headings */
 }
 
 body::-webkit-scrollbar-thumb{

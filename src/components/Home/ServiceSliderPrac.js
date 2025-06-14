@@ -2,7 +2,7 @@
 
 'use client';
 
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { useCarouselRotation } from '../../hooks/useCarouselRotation';
@@ -15,111 +15,95 @@ export default function ServiceSliderPrac({ gallery }) {
     const containerRef = useRef(null);
     const boxRefs = useRef([]);
     const innerFlipRefs = useRef([]);
-    const isNavigatingRef = useRef(false); // New ref to prevent multiple navigations
+    const isNavigatingRef = useRef(false);
 
     const router = useRouter();
 
-    const slideData = gallery
+    const slideData = gallery;
 
-    // const slideData = [
-    //     {
-    //         image: '/home/service1.jpg',
-    //         frontText: 'Activation',
-    //         backContent: 'Details for Activation services. This content can be more extensive for Activation.',
-    //         subText: 'ACTIVATIONS',
-    //         categoryIndex: 0,
-    //         url: "/service/activations"
-    //     },
-    //     {
-    //         image: '/home/service2.jpg',
-    //         frontText: 'Retail',
-    //         backContent: 'Explore our Retail solutions tailored for modern businesses.',
-    //         subText: 'RETAIL',
-    //         categoryIndex: 1,
-    //         url: "/service/retail"
-    //     },
-    //     {
-    //         image: '/home/service3.jpg',
-    //         frontText: 'Content',
-    //         backContent: 'Creative and engaging Content strategies to boost your brand.',
-    //         subText: 'CONTENT',
-    //         categoryIndex: 2,
-    //         url: "/service/content"
-    //     },
-    //     {
-    //         image: '/home/service4.jpg',
-    //         frontText: 'Event',
-    //         backContent: 'Seamless Event management from concept to execution.',
-    //         subText: 'EVENT',
-    //         categoryIndex: 3,
-    //         url: "/service/event"
-    //     },
-    //     {
-    //         image: '/home/service5.jpg',
-    //         frontText: 'Design',
-    //         backContent: 'Innovative Design approaches for compelling user experiences.',
-    //         subText: 'DESIGN',
-    //         categoryIndex: 4,
-    //         url: "/service/design"
-    //     },
-    //     {
-    //         image: '/home/service1.jpg',
-    //         frontText: 'Digital',
-    //         backContent: 'Comprehensive digital marketing and strategy solutions.',
-    //         subText: 'ACTIVATIONS',
-    //         categoryIndex: 0,
-    //         url: "/service/activations"
-    //     },
-    //     {
-    //         image: '/home/service2.jpg',
-    //         frontText: 'Strategy',
-    //         backContent: 'Strategic planning and consulting for business growth.',
-    //         subText: 'RETAIL',
-    //         categoryIndex: 1,
-    //         url: "/service/retail"
-    //     },
-    //     {
-    //         image: '/home/service3.jpg',
-    //         frontText: 'Analytics',
-    //         backContent: 'Data analytics to drive informed business decisions.',
-    //         subText: 'CONTENT',
-    //         categoryIndex: 2,
-    //         url: "/service/content"
-    //     },
-    //     {
-    //         image: '/home/service4.jpg',
-    //         frontText: 'Support',
-    //         backContent: 'Ongoing support and maintenance for all your needs.',
-    //         subText: 'EVENT',
-    //         categoryIndex: 3,
-    //         url: "/service/design"
-    //     },
-    // ];
-
-    const { activeIndex } = useCarouselRotation(containerRef, TOTAL_SLIDES, step);
+    const { activeIndex, goToIndex } = useCarouselRotation(containerRef, TOTAL_SLIDES, step);
     useBoxStyling(boxRefs, activeIndex, slideData.map(d => d.image));
 
     const [flippedIndex, setFlippedIndex] = useState(null);
 
-    // This handles both the flip and initiates navigation directly for the active card
+    const [sliderStyle, setSliderStyle] = useState({ left: '0px', width: '0px' });
+    const buttonRefs = useRef([]);
+    const categoryListRef = useRef(null);
+
+    const updateSliderPosition = useCallback(() => {
+        // Find the index of the corresponding button based on activeCategory
+        // Assuming your category list order matches the categoryIndex in slideData for simplicity
+        const activeCategory = slideData[activeIndex]?.categoryIndex;
+
+        // More robust way to find the button associated with the active category:
+        // You'd need a consistent mapping between your hardcoded category names and slideData.categoryIndex
+        // For example, if 'Activation' always corresponds to categoryIndex 0, 'Retail' to 1, etc.
+        const categoryNames = ['Activation', 'Retail', 'Content', 'Events', 'Design'];
+        const currentActiveCategoryName = categoryNames[activeCategory];
+
+
+        // Find the button element based on its inner text
+        const buttonElement = buttonRefs.current.find(btn =>
+            btn && btn.querySelector('p')?.textContent === currentActiveCategoryName
+        );
+
+        // Fallback if the above doesn't work or if there's a direct index match
+        // This covers cases where categoryIndex directly maps to button's `i`
+        let targetButtonIndex = activeCategory;
+        if (targetButtonIndex === undefined || targetButtonIndex < 0 || targetButtonIndex >= buttonRefs.current.length) {
+            targetButtonIndex = activeIndex; // Fallback to activeIndex of carousel if categoryIndex is problematic
+            if (targetButtonIndex >= buttonRefs.current.length) { // Ensure it's within button bounds
+                targetButtonIndex = 0; // Default to first button if all else fails
+            }
+        }
+        const finalButtonElement = buttonRefs.current[targetButtonIndex];
+
+
+        if (finalButtonElement && categoryListRef.current) {
+            const listRect = categoryListRef.current.getBoundingClientRect();
+            const buttonRect = finalButtonElement.getBoundingClientRect();
+
+            setSliderStyle({
+                left: `${buttonRect.left - listRect.left}px`,
+                width: `${buttonRect.width}px`,
+                height: `${buttonRect.height}px`, // Added height to ensure background covers button
+                top: `${buttonRect.top - listRect.top}px`, // Added top for correct vertical alignment
+            });
+        }
+    }, [activeIndex, slideData]);
+
+    useEffect(() => {
+        const timeout = setTimeout(updateSliderPosition, 50); // Small delay
+        return () => clearTimeout(timeout);
+    }, [activeIndex, updateSliderPosition]);
+
+    useEffect(() => {
+        window.addEventListener('resize', updateSliderPosition);
+        return () => window.removeEventListener('resize', updateSliderPosition);
+    }, [updateSliderPosition]);
+
+
     const handleCardInteraction = (index) => {
         if (index === activeIndex) {
-            // Prevent multiple navigations if already initiated
             if (isNavigatingRef.current) return;
-
-            setFlippedIndex(index); // Initiate the flip animation
-
-            const targetUrl = slideData[index].url;
+            setFlippedIndex(index);
+            const targetUrl = slideData[index]?.url;
             if (targetUrl) {
-                isNavigatingRef.current = true; // Set flag to true
-
-                // Delay the navigation slightly more to allow the flip to be visible
-                // A very small delay (e.g., 50ms-100ms) can improve reliability on mobile
-                // while still feeling seamless. You can even set it to the animation duration.
+                isNavigatingRef.current = true;
                 setTimeout(() => {
                     router.push(targetUrl);
-                }, 500); // Increased delay slightly for better mobile reliability and visual effect
+                }, 300);
             }
+        } else {
+            goToIndex(index);
+        }
+    };
+
+    const handleCategoryClick = (buttonIndex) => {
+        if (buttonIndex >= 0 && buttonIndex < slideData.length) {
+            goToIndex(buttonIndex);
+        } else {
+            console.warn(`Category button index ${buttonIndex} is out of bounds for slideData.`);
         }
     };
 
@@ -130,12 +114,47 @@ export default function ServiceSliderPrac({ gallery }) {
 
     return (
         <section className='flex flex-col justify-center items-center'>
-            <p className="text-white opacity-50 text-center mt-5 text-xl">
-                {headerText}
-            </p>
+            {/* Added relative positioning for the absolute slider */}
+            <div className="relative">
+                <ul
+                    ref={categoryListRef} // Attach ref to the ul
+                    // z-index on ul to ensure buttons are above slider
+                    className="flex flex-wrap text-center justify-center gap-y-[-50px] gap-x-2 sm:gap-x-10 relative z-20 px-0"
+                >
+                    {['Activation', 'Retail', 'Content', 'Event', 'Design'].map((l, i) => (
+                        <li
+                            key={i}
+                            className={`text-white text-sm sm:text-l text-center mt-10`} // Removed opacity-100/50 from li directly
+                        >
+                            <button
+                                ref={el => (buttonRefs.current[i] = el)} // Attach ref to each button
+                                // Ensure button has a transparent background or is positioned correctly
+                                // relative z-30 (higher than slider)
+                                className="px-1 py-1 sm:px-5 sm:py-2 relative z-30 bg-transparent" // Added bg-transparent
+                                onClick={() => handleCategoryClick(i)}
+                            >
+                                <p className={i === currentCategoryIndex ? 'opacity-100' : 'opacity-50'}>{l}</p> {/* Moved opacity to p tag */}
+                            </button>
+                        </li>
+                    ))}
+                </ul>
 
-            <div className={styles.wrapper}>
-                <div ref={containerRef} className={styles.container}>
+                {/* The sliding background element */}
+                <div
+                    // The slider should be positioned absolutely relative to the UL
+                    // and have a z-index between the UL's background and the button's text
+                    // (so, z-20 for slider if buttons are z-30 and UL is z-10)
+                    className="absolute bg-pink rounded-3xl transition-all duration-300 ease-out z-10"
+                    style={sliderStyle}
+                ></div>
+            </div>
+
+
+            <div className="w-full h-[50vh] flex justify-center items-end overflow-hidden relative sm:h-[65vh]">
+                <div ref={containerRef} className="w-[400px] h-[400px] mb-[-15vh] translate-y-[15%] relative origin-[50%_50%]
+                 xl:w-[1200px] xl:h-[600px] xl:mb-[-12rem] xl:translate-y-[20%]
+                 lg:w-[900px] lg:h-[500px] lg:mb-[-12rem] lg:translate-y-[20%] 
+                 sm:w-[1500px] sm:h-[1500px] sm:mb-[-35rem]">
                     <svg className={styles.svgPath} viewBox="0 0 400 400">
                         <path
                             strokeWidth="0"
@@ -145,50 +164,38 @@ export default function ServiceSliderPrac({ gallery }) {
                             d="M396,200 C396,308.24781 308.24781,396 200,396 91.75219,396 4,308.24781 4,200 4,91.75219 91.75219,4 200,4 308.24781,4 396,91.75219 396,200 z"
                         />
                     </svg>
+                    
                     {Array.from({ length: TOTAL_SLIDES }).map((_, i) => (
                         <div
                             key={i}
-                            className={`${styles.box} box`}
+                            className="box absolute w-[180px] h-[240px] md:max-xl:w-[30vh] md:max-xl:h-[40vh] flex justify-center items-center rounded-[20px] select-none box-border opacity-0 z-0 overflow-hidden"
                             ref={(el) => (boxRefs.current[i] = el)}
                         >
                             <motion.div
                                 className={styles['flip-card-inner']}
                                 animate={{ rotateX: flippedIndex === i ? 180 : 0 }}
-                                transition={{ duration: 0.8, type: 'spring', stiffness: 100, damping: 20 }}
+                                transition={{ duration: 0.4, type: 'spring', stiffness: 100, damping: 20 }}
                                 style={{ transformStyle: 'preserve-3d' }}
                                 onClick={() => handleCardInteraction(i)}
                                 onAnimationComplete={() => {
                                     if (flippedIndex === i) {
-                                        setFlippedIndex(null); // Reset after flip to prepare for next interaction
+                                        setFlippedIndex(null);
                                     }
-                                    isNavigatingRef.current = false; // Reset flag after navigation (or animation completion)
+                                    isNavigatingRef.current = false;
                                 }}
                                 ref={(el) => (innerFlipRefs.current[i] = el)}
                             >
-
                                 <div className="flip-card-front">
-                                    <img src={slideData[i].image} alt={slideData[i].frontText} className="w-full h-full object-cover rounded-2xl" />
+                                    <img src={slideData[i]?.image} alt={slideData[i]?.frontText} className="w-full h-full object-cover rounded-2xl" />
                                 </div>
-
                                 <div className="flip-card-back">
-                                    <img src={slideData[i].image} alt={`${slideData[i].frontText} Back`} className="w-full h-full object-cover rounded-2xl" />
+                                    {/* <img src={slideData[i]?.image} alt={`${slideData[i]?.frontText} Back`} className="w-full h-full object-cover rounded-2xl" /> */}
                                 </div>
                             </motion.div>
                         </div>
                     ))}
                 </div>
             </div>
-
-            <ul className="flex text-center justify-center text-2xl gap-5">
-                {['A', 'R', 'C', 'E', 'D'].map((l, i) => (
-                    <li
-                        key={i}
-                        className={`text-white text-center mt-10 ${i === currentCategoryIndex ? 'opacity-100' : 'opacity-50'}`}
-                    >
-                        {l}
-                    </li>
-                ))}
-            </ul>
         </section>
     );
 }
