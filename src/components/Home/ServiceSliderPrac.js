@@ -21,7 +21,7 @@ export default function ServiceSliderPrac({ gallery }) {
 
     const slideData = gallery;
 
-    const { activeIndex, goToIndex } = useCarouselRotation(containerRef, TOTAL_SLIDES, step);
+    const { activeIndex, stopAutoplay, goToIndex } = useCarouselRotation(containerRef, TOTAL_SLIDES, step);
     useBoxStyling(boxRefs, activeIndex, slideData.map(d => d.image));
 
     const [flippedIndex, setFlippedIndex] = useState(null);
@@ -86,6 +86,7 @@ export default function ServiceSliderPrac({ gallery }) {
     const handleCardInteraction = (index) => {
         if (index === activeIndex) {
             if (isNavigatingRef.current) return;
+            stopAutoplay();
             setFlippedIndex(index);
             const targetUrl = slideData[index]?.url;
             if (targetUrl) {
