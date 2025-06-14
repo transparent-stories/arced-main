@@ -29,12 +29,12 @@ const ProjectsnFiltering = ({ title, ids }) => {
   if (!loading && !error && filteredProjects.length === 0) return <EmptyState message="No projects available" height="100vh" />;
 
   return (
-    <div className="max-w-7xl mx-auto min-h-screen px-4 py-8 flex flex-col">
+    <div className="max-w-7xl mx-auto px-4 py-8 flex flex-col">
       <section className="max-w-3xl mx-auto">
-        <h2 className="text-3xl font-semibold text-center text-pink">{title} PROJECTS</h2>
-        <p className="text-gray-600 overflow-hidden my-10 text-center text-sm">
+        <h2 className="text-3xl font-semibold text-center text-white">{title} PROJECTS</h2>
+        {/* <p className="text-gray-600 overflow-hidden my-10 text-center text-sm">
           Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.
-        </p>
+        </p> */}
       </section>
       
       {/* <CategoryFilter pillar={title} categories={categories} handleCategoryFilter={handleCategoryFilter} activeCategory={activeCategory}  /> */}
