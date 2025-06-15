@@ -52,12 +52,12 @@ const Header = () => {
                     width={300}
                     height={250}
                     className="transition-transform ml-16 duration-500 transform hover:scale-110 fill-green
-                    w-48 h-auto sm:w-40 md:w-48 lg:w-60 xl:w-48"
+                    w-40 h-auto sm:w-40 md:w-48 lg:w-60 xl:w-48"
                 />
             </Link>
 
             {/* Social Buttons on the right */}
-            {/* <SocialButtons socialItems={socials} /> */}
+            <SocialButtons socialItems={socials} />
         </header>
     );
 };

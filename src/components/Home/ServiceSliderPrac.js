@@ -166,13 +166,13 @@ export default function ServiceSliderPrac({ gallery }) {
                     {['Activation', 'Retail', 'Content', 'Event', 'Design'].map((l, i) => (
                         <li
                             key={i}
-                            className={`text-white text-sm sm:text-l text-center mt-10`} // Removed opacity-100/50 from li directly
+                            className={`text-white text-sm sm:text-xl text-center mt-10`} // Removed opacity-100/50 from li directly
                         >
                             <button
                                 ref={el => (buttonRefs.current[i] = el)} // Attach ref to each button
                                 // Ensure button has a transparent background or is positioned correctly
                                 // relative z-30 (higher than slider)
-                                className="px-1 py-1 sm:px-5 sm:py-2 relative z-30 bg-transparent" // Added bg-transparent
+                                className="px-3 py-1 sm:px-5 sm:py-2 relative z-30 bg-transparent" // Added bg-transparent
                                 onClick={() => handleCategoryClick(i)}
                             >
                                 <p className={i === currentCategoryIndex ? 'opacity-100' : 'opacity-50'}>{l}</p> {/* Moved opacity to p tag */}
