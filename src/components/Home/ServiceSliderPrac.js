@@ -134,7 +134,7 @@ export default function ServiceSliderPrac({ gallery }) {
                 isNavigatingRef.current = true;
                 setTimeout(() => {
                     router.push(targetUrl);
-                }, 300);
+                }, 100);
             }
         } else {
             goToIndex(index);

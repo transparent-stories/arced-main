@@ -1,21 +1,17 @@
 // 'use client';
 // import React, { useState, useRef, useEffect } from 'react';
+import { headers } from 'next/headers';
 
-const ServiceVideo = ({ desktopVideoSrc, mobileVideoSrc }) => {
-    // const videoRef = useRef(null);
-    // const [muted, setMuted] = useState(true);
+const ServiceVideo = async ({ desktopVideoSrc, mobileVideoSrc, desktop_poster, mobile_poster }) => {
+    
 
-    // // Toggle mute/unmute functionality
-    // const toggleMute = () => {
-    //     const newMutedState = !muted;
-    //     setMuted(newMutedState);
-    //     if (videoRef.current) {
-    //         videoRef.current.muted = newMutedState;
-    //     }
-    // };
+    const userAgent = await headers();
+    const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent.get('user-agent'));
+
+    // Determine which poster to use based on the server-side detection
+    const currentPoster = isMobileDevice ? mobile_poster : desktop_poster;
 
     // Determine which video to use based on screen size
-
     return (
         <div
             className="relative flex flex-col justify-center items-center video-card"
@@ -31,6 +27,8 @@ const ServiceVideo = ({ desktopVideoSrc, mobileVideoSrc }) => {
                 autoPlay
                 playsInline
                 loop
+                {...(isMobileDevice && { controls: true })}
+                {...(currentPoster && { poster: currentPoster })}
             >
                 {/* Desktop video for larger screens */}
                 <source src={desktopVideoSrc} media="(min-width: 768px)" type="video/mp4" />

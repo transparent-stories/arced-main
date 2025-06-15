@@ -68,14 +68,16 @@ export default async function page({ params }) {
 
     const {
         desktop_video,
+        desktop_poster,
         mobile_video,
+        mobile_poster,
         related_projects = []
     } = serviceData?.acf;
 
     return (
       <>
       <HeaderOpaque />
-      <ServiceVideo desktopVideoSrc={desktop_video || default_desktop_video} mobileVideoSrc={mobile_video || default_mobile_video}/>
+      <ServiceVideo desktop_poster={desktop_poster} mobile_poster={mobile_poster} desktopVideoSrc={desktop_video || default_desktop_video} mobileVideoSrc={mobile_video || default_mobile_video}/>
       {/* <section className='sm:flex items-center gap-10 py-10 m-4' >
         <div className='flex-1' data-aos="fade-right" data-aos-duration="600">
           <img src="/home/service1.jpg" alt="sample alt" className="w-full aspect-[5/4] rounded-2xl object-cover" />
