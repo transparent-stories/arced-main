@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import React, { useState } from 'react';
+import SocialButtons from './SocialButtons';
 
 
 
@@ -25,39 +26,56 @@ const menu = [
 const socials = [
     {
         title: "Instgram",
-        link: "https://instagram.com"
+        link: "https://www.instagram.com/arcedmarketing"
     },
+    // {
+    //     title: "Facebook",
+    //     link: "https://facebook.com"
+    // },
     {
-        title: "Facebook",
-        link: "https://facebook.com"
+        title: "LinkedIn",
+        link: "https://www.linkedin.com/company/arced-marketing/"
     },
-    {
-        title: "Twitter",
-        link: "https://x.com"
-    }
+    // {
+    //     title: "Twitter",
+    //     link: "https://x.com"
+    // }
 ];
 
-const HeaderOpaque = () => {
+const HeaderOpaque = ({header_text}) => {
     return (
         <header className="px-5 sm:px-20 py-5 font-bold flex justify-between items-center bg-black w-full text-white z-20">
             {/* Flyout Menu on the left */}
-            <FlyoutMenu menuItems={menu} />
+            <div className='flex flex-row relative justify-start items-center gap-5'>
+                <FlyoutMenu menuItems={menu} />
+                {header_text && <h1 data-aos="fade-right" className='ml-10 w-max text-3xl hidden sm:block absolute'>{header_text}</h1>}
+            </div>
 
             {/* Logo in the center */}
-            <Link href="/">
-                <Image
-                    src="/logo.png"
-                    alt="ARCED logo"
-                    // sizes="(max-width: 768px) 200px, (max-width: 1200px) 300px, 300px"
-                    width={300}
-                    height={250}
-                    className="transition-transform ml-16 duration-500 transform hover:scale-110 fill-green
-                    w-40 h-auto sm:w-40 md:w-48 lg:w-60 xl:w-48"
-                />
-            </Link>
+            {/*
+                We use 'mx-auto' within a flex container to center this item.
+                The 'flex-1' on the surrounding divs helps distribute space
+                so the logo truly appears in the visual center.
+            */}
+            <div className="flex-1 flex justify-center items-center">
+                <Link href="/">
+                    <Image
+                        src="/logo.png"
+                        alt="ARCED logo"
+                        // The 'sizes' prop is commented out, ensure 'width' and 'height' are appropriate
+                        // or uncomment 'sizes' and provide correct values for responsive image loading.
+                        width={300} // Set a base width for the logo
+                        height={250} // Set a base height for the logo
+                        className="transition-transform duration-500 transform hover:scale-110 fill-green
+                        w-40 h-auto sm:w-40 md:w-48 lg:w-60 xl:w-48" // Responsive width classes
+                    />
+                </Link>
+            </div>
 
             {/* Social Buttons on the right */}
-            <SocialButtons socialItems={socials} />
+            <div className="flex flex1 justify-end items-center">
+                <SocialButtons socialItems={socials} />
+            </div>
         </header>
     );
 };
@@ -102,28 +120,6 @@ const FlyoutMenu = ({ menuItems }) => {
                     ))}
                 </div>
             )}
-        </div>
-    );
-};
-
-// SocialButtons Component
-const SocialButtons = ({ socialItems }) => {
-    return (
-        <div className="flex space-x-4">
-            {socialItems.map((item, index) => (
-                <Link key={index} href={item.link} className="text-white hover:text-gray-300" aria-label={item.title}>
-                    {/* Replace with actual social icons (e.g., Font Awesome, SVG icons) */}
-                    {item.title === "Instgram" && (
-                        <Image className='opacity-40 hover:opacity-100 hover:scale-110' src="/icons/social/instagram.svg" alt="Instagram" width={20} height={20} />
-                    )}
-                    {item.title === "Facebook" && (
-                        <Image className='opacity-40 hover:opacity-100 hover:scale-110' src="/icons/social/facebook.svg" alt="Facebook" width={20} height={20} />
-                    )}
-                    {item.title === "Twitter" && (
-                        <Image className='opacity-40 hover:opacity-100 hover:scale-110' src="/icons/social/twitter.svg" alt="Twitter" width={20} height={20} />
-                    )}
-                </Link>
-            ))}
         </div>
     );
 };

@@ -71,6 +71,8 @@ export default async function page({ params }) {
         desktop_poster,
         mobile_video,
         mobile_poster,
+        all_poster,
+        content,
         related_projects = []
     } = serviceData?.acf;
 
@@ -90,7 +92,7 @@ export default async function page({ params }) {
           </p>
         </div>
       </section> */}
-      <ProjectsnFiltering title={slug.toUpperCase()} ids={related_projects} />
+      <ProjectsnFiltering featured_image={all_poster || desktop_poster} content={content} title={capitalizeFirstLetter(slug)} ids={related_projects} />
         <Footer/>
       </>
     );
@@ -99,6 +101,10 @@ export default async function page({ params }) {
     return <ErrorState message="Error fetching page." height="100vh" />;
   }
 }
+
+function capitalizeFirstLetter(string) {
+     return string.charAt(0).toUpperCase() + string.slice(1);
+   }
 
 
 // const page = async ({ params }) => {

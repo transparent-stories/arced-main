@@ -1,124 +1,130 @@
 // useProjectsData.js
-import { useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query'; // Import useQuery from React Query
 import { fetchFromApiWp } from '@/utils/api'; // Ensure this path is correct
 
 /**
- * Fetches projects data from the WordPress API.
- * @param {object} queryParams - Query parameters for the API request.
- * @returns {Promise<Array>} - A promise that resolves to an array of project data.
- * @throws {Error} If projects are not found or an API error occurs.
+ * Helper function to slugify a string for URL-friendly names.
+ * You might already have this in ProjectsnFiltering.js, but it's good to keep it close to category logic.
+ * If your category data already has a 'slug', this might not be strictly necessary for query keys,
+ * but is good for consistency in URL params.
  */
-async function getProjectsData(queryParams) {
+const slugify = (text) => {
+  if (!text) return '';
+  return text
+    .toString()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, '-')
+    .replace(/[^\w-]+/g, '')
+    .replace(/--+/g, '-');
+};
+
+/**
+ * This function will be the main queryFn for useQuery.
+ * It fetches both projects and their related categories.
+ * @param {Array<number>} ids - An array of project IDs.
+ * @returns {Promise<{projects: Array, categories: Array}>}
+ * @throws {Error} If any fetch fails or no projects/categories are found.
+ */
+async function fetchAllProjectsAndCategories(ids) {
+  let projectsData = [];
+  let categoriesData = [];
+  let total_projects = ids?.length;
+
+  if (!ids || ids.length === 0) {
+    // If no IDs provided, return empty arrays immediately
+    return { projects: [], categories: [] };
+  }
+
+  const idsString = ids.toString();
+  const projectQueryParams = {
+    include: idsString,
+    _fields: "id,title,acf,categories",
+    acf_format: "standard",
+    status: "publish",
+    ...(total_projects && { per_page: total_projects.toString() }),
+  };
+
   try {
-    const pageData = await fetchFromApiWp(`/projects`, queryParams, "wp");
-    return pageData?.data;
+    // 1. Fetch Projects Data
+    const fetchedProjects = await fetchFromApiWp(`/projects`, projectQueryParams, "wp");
+    projectsData = fetchedProjects?.data || [];
+
+    if (projectsData.length === 0) {
+      // If no projects found, return empty categories as well
+      return { projects: [], categories: [] };
+    }
+
+    // 2. Get all unique category IDs from fetched projects
+    const allUniqueCategoryIds = Array.from(
+      new Set(projectsData.reduce((acc, project) => acc.concat(project.categories), []))
+    );
+
+    // 3. Fetch Categories Data if there are unique category IDs
+    if (allUniqueCategoryIds.length > 0) {
+      const categoriesString = allUniqueCategoryIds.join(',');
+      const categoriesQueryParams = { include: categoriesString, _fields: "id,name,count,acf" };
+      const fetchedCategories = await fetchFromApiWp(`/categories?acf_format=standard`, categoriesQueryParams, "wp");
+      categoriesData = fetchedCategories?.data || [];
+    }
+
+    // Ensure "All" category is always present and add slugs if they don't exist
+    let finalCategories = [];
+    if (!categoriesData || categoriesData.length === 0) {
+      finalCategories = [{ id: 'all', name: 'All Projects', slug: 'all-projects' }];
+    } else {
+      // Add 'slug' property to categories if it's missing (important for URL params)
+      finalCategories = categoriesData.map(cat => ({
+        ...cat,
+        slug: cat.slug || slugify(cat.name), // Use existing slug or generate from name
+      }));
+      // Optionally, add 'All Projects' as the first option if desired
+      // finalCategories.unshift({ id: 'all', name: 'All Projects', slug: 'all-projects' });
+    }
+
+
+    return { projects: projectsData, categories: finalCategories };
+
   } catch (error) {
-    console.error(`Error fetching projects`, error);
-    // Re-throw with a more descriptive message for the hook to catch
-    throw new Error(error.message || "Projects not found");
+    console.error(`Error in useProjectsData fetch:`, error);
+    // Re-throw the error for React Query to handle
+    throw new Error(error.message || 'Failed to fetch projects and categories.');
   }
 }
 
 /**
- * Fetches categories data from the WordPress API.
- * @param {object} queryParams - Query parameters for the API request.
- * @returns {Promise<Array>} - A promise that resolves to an array of category data.
- * @throws {Error} If categories are not found or an API error occurs.
- */
-async function getCategoriesData(queryParams) {
-  try {
-    const pageData = await fetchFromApiWp(`/categories`, queryParams, "wp");
-    return pageData?.data;
-  } catch (error) {
-    console.error(`Error fetching categories`, error);
-    // Re-throw with a more descriptive message for the hook to catch
-    throw new Error(error.message || "Categories not found");
-  }
-}
-
-/**
- * A custom React hook for fetching projects and their associated categories from a WordPress API.
- * It manages loading, error, and data states.
+ * A custom React hook for fetching projects and their associated categories from a WordPress API using React Query.
  *
  * @param {Array<number>} ids - An array of project IDs to fetch.
  * @returns {{loading: boolean, error: string | null, projects: Array, categories: Array}}
- * An object containing the current loading state, any error message,
- * the fetched projects, and the fetched categories.
  */
 const useProjectsData = (ids) => {
-  const [loading, setLoading] = useState(true);
-  const [projects, setProjects] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [error, setError] = useState(null);
+  // The query key ['projectsAndCategories', ids] ensures React Query caches data based on `ids`
+  // and intelligently refetches only when `ids` changes or the cache is stale.
+  const {
+    data,
+    isLoading, // True when the query is actively fetching data
+    isError,   // True if the query encountered an error
+    error,     // The error object
+    isFetching // True if the query is fetching data in the background (e.g., stale-while-revalidate)
+  } = useQuery({
+    queryKey: ['projectsAndCategories', ids], // Unique key for this query, includes ids
+    queryFn: () => fetchAllProjectsAndCategories(ids), // The function that performs the actual data fetching
+    staleTime: 1000 * 60 * 5, // Data is considered "stale" after 5 minutes. After this, it will refetch in background.
+    cacheTime: 1000 * 60 * 10, // Data is kept in cache for 10 minutes even if unused.
+    enabled: !!ids && ids.length > 0, // Only run the query if ids are provided and not empty
+  });
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true); // Ensure loading is true on each effect run
-      setError(null);   // Clear previous errors
-
-      let idsString = ids.toString();
-      const projectQueryParams = {
-        include: idsString,
-        _fields: "id,title,acf,categories",
-        acf_format: "standard",
-        status: "publish",
-      };
-
-      try {
-        // Fetch projects data
-        const projectsData = await getProjectsData(projectQueryParams);
-
-        if (!projectsData || projectsData.length === 0) {
-          setError('No projects found with the provided IDs.');
-          setProjects([]); // Clear projects if none found
-          setCategories([]); // Clear categories as well
-          setLoading(false);
-          return;
-        }
-
-        setProjects(projectsData);
-
-        // Get all unique categories from the fetched projects
-        const allCategories = Array.from(
-          new Set(projectsData.reduce((acc, project) => acc.concat(project.categories), []))
-        );
-
-        // If there are no categories in the projects, default to "All"
-        if (allCategories.length === 0) {
-          setCategories([{ id: 'all', name: 'All' }]);
-          setLoading(false);
-          return;
-        }
-
-        const categoriesString = allCategories.join(',');
-        const categoriesQueryParams = { include: categoriesString, _fields: "id,name,count" };
-
-        // Fetch categories data
-        const categoriesData = await getCategoriesData(categoriesQueryParams);
-
-        // Ensure "All" category is always present
-        if (!categoriesData || categoriesData.length === 0) {
-          setCategories([{ id: 'all', name: 'All' }]);
-        } else {
-          // If you want "All" to always be the first option:
-          // setCategories([{ id: 'all', name: 'All' }, ...categoriesData]);
-          setCategories(categoriesData);
-        }
-
-        setLoading(false);
-      } catch (err) {
-        // Catch specific errors from getProjectsData/getCategoriesData
-        setError(err.message || 'An unexpected error occurred while fetching data.');
-        setLoading(false);
-        setProjects([]);     // Clear projects on error
-        setCategories([]);   // Clear categories on error
-      }
-    };
-
-    fetchData();
-  }, [ids]); // Re-run effect if 'ids' prop changes
-
-  return { loading, error, projects, categories };
+  return {
+    loading: isLoading, // Initial loading state
+    error: isError ? error.message : null, // Error message
+    projects: data?.projects || [], // Projects data, defaults to empty array
+    categories: data?.categories || [], // Categories data, defaults to empty array
+    // You might want to expose isFetching if you want a more subtle loading indicator for background refetches
+    // isFetching,
+  };
 };
 
 export default useProjectsData;

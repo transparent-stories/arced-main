@@ -237,7 +237,7 @@ const ImageCarousel = ({ title, images, autoPlayOnHover }) => {
                                     }}
                                 >
                                     {videoRefs.current[idx]?.paused && playingVideoIndex !== idx ? (
-                                        <span className="text-5xl">&#9658;</span> // Play icon
+                                        <span className="text-4xl">&#9658;</span> // Play icon
                                     ) : (
                                         <span className="text-4xl">&#10074;&#10074;</span> // Pause icon
                                     )}
@@ -260,7 +260,7 @@ const ImageCarousel = ({ title, images, autoPlayOnHover }) => {
         {loaded && instanceRef.current && images.length > 1 && (
             <>
                 <motion.button
-                    className="absolute top-1/2 left-2 bg-orange bg-opacity-50 hover:bg-opacity-100 text-black py-2 px-4 rounded-full focus:outline-none z-10 flex md:hidden md:group-hover:flex transform hover:-translate-y-1/2"
+                    className="absolute top-1/2 left-2 bg-white bg-opacity-70 hover:bg-opacity-100 text-black py-2 px-4 rounded-full focus:outline-none z-10 flex md:hidden md:group-hover:flex transform hover:-translate-y-1/2"
                     onClick={() => instanceRef.current?.prev()}
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
@@ -269,7 +269,7 @@ const ImageCarousel = ({ title, images, autoPlayOnHover }) => {
                     &#10094; {/* Left arrow */}
                 </motion.button>
                 <motion.button
-                    className="absolute top-1/2 right-2 bg-orange bg-opacity-50 hover:bg-opacity-100 text-black py-2 px-4 rounded-full focus:outline-none z-10 flex md:hidden md:group-hover:flex transform hover:-translate-y-1/2"
+                    className="absolute top-1/2 right-2 bg-white bg-opacity-70 hover:bg-opacity-100 text-black py-2 px-4 rounded-full focus:outline-none z-10 flex md:hidden md:group-hover:flex transform hover:-translate-y-1/2"
                     onClick={() => instanceRef.current?.next()}
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}

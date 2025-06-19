@@ -13,13 +13,13 @@ const ProjectCard = ({ project }) => {
 
   return (
     <motion.div
-      className="hover:bg-sky hover:bg-opacity-10 p-6 border border-sky border-opacity-10 rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-300 relative overflow-hidden" // Added shadow-md and hover:shadow-lg
+      className="hover:bg-pink p-2 rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-300 relative overflow-hidden min-w-[300px] sm:w-[400px]" // Added shadow-md and hover:shadow-lg
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       whileHover={{ scale: 1.02 }} // Subtle scale on hover
       transition={{ type: 'spring', stiffness: 300, damping: 20 }}
 
-      data-aos="fade-up" data-aos-duration="600"
+      // data-aos="fade-up" data-aos-duration="600"
     >
       {/* Image Carousel - always visible if images exist */}
       {hasImages && (
@@ -30,12 +30,12 @@ const ProjectCard = ({ project }) => {
 
       {/* Project details - always visible */}
       {/* Removed the conditional rendering that was switching between carousel and content */}
-      <div className="py-5 flex flex-col items-center h-full"> {/* Ensure content takes full height */}
+      <div className="py-2 flex flex-col items-center h-full"> {/* Ensure content takes full height */}
         {/* Removed project.acf?.main_image?.url as per your previous instruction */}
-        <h3 className="text-xl opacity-85 font-semibold mb-2 text-center">{project.title.rendered}</h3>
+        <div className="text-sm opacity-85 font-semibold mb-0 text-center">{project.title.rendered}</div>
         <div
           className="text-gray-600 overflow-hidden text-center text-sm" // Add overflow hidden to prevent content bleed
-          dangerouslySetInnerHTML={{ __html: project.acf.description }}
+          // dangerouslySetInnerHTML={{ __html: project.acf.description }}
         />
       </div>
     </motion.div>
