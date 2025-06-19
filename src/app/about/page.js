@@ -9,7 +9,7 @@ const About = () => {
                 <div className='py-5 text-center h-[50vh] flex flex-col gap-10 justify-center max-w-5xl'>
                     <h3 className='text-3xl'>ARCED is an echo of not only 'what' we do, but 'how' we do it.</h3>
                     <p>Activations, Retail, Content, Events and Design form the disciplines we exercise as ardent marketeers and by doing different things differently.</p>
-                    <p>Seasoned professionals who never learnt to think unilaterally, but a brave bunch who break the mould by making a conscious choice to Deviate and Innovate</p>
+                    <p>Seasoned professionals who never learnt to think unilaterally, but a brave bunch who break the mould by making a conscious choice to Deviate and Innovate</p>
                 </div>
             </section>
         </div>
