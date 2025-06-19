@@ -4,8 +4,6 @@ import Providers from './providers';
 import Link from 'next/link';
 import { Sora } from 'next/font/google'
 import _customFont from '@/app/font'
-import Footer from '@/components/Global/Footer';
-import Header from '@/components/Global/Header';
 
 const _sora = Sora({
   weight: ['400', '500', '600'],
@@ -15,8 +13,8 @@ const _sora = Sora({
 })
 
 export const metadata = {
-  title: 'Genki Ramune',
-  description: 'Refreshing soda drinks for all ages!',
+  title: 'ARCED',
+  description: 'Activations, Retail, Content, Events and Design form the disciplines we exercise as ardent marketeers and by doing different things differently',
 };
 
 export default function RootLayout({ children }) {
@@ -29,7 +27,7 @@ export default function RootLayout({ children }) {
       </head>
       <body>
         <Providers>
-          <Header />
+          
           <main>{children}</main>
           {/* <Footer /> */}
         </Providers>

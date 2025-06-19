@@ -42,9 +42,9 @@ const socials = [
     // }
 ];
 
-const Header = ({header_text}) => {
+const HeaderOpaque = ({header_text}) => {
     return (
-        <header className="px-5 sm:px-20 py-5 font-bold flex justify-between items-center bg-transparent absolute top-0 w-full text-white z-20">
+        <header className="px-5 sm:px-20 py-5 font-bold flex justify-between items-center bg-black w-full text-white z-20">
             {/* Flyout Menu on the left */}
             <div className='flex flex-row relative justify-start items-center gap-5'>
                 <FlyoutMenu menuItems={menu} />
@@ -52,6 +52,11 @@ const Header = ({header_text}) => {
             </div>
 
             {/* Logo in the center */}
+            {/*
+                We use 'mx-auto' within a flex container to center this item.
+                The 'flex-1' on the surrounding divs helps distribute space
+                so the logo truly appears in the visual center.
+            */}
             <div className="flex-1 flex justify-center items-center">
                 <Link href="/">
                     <Image
@@ -119,4 +124,4 @@ const FlyoutMenu = ({ menuItems }) => {
     );
 };
 
-export default Header;
+export default HeaderOpaque;

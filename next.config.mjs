@@ -4,7 +4,7 @@ const nextConfig = {
         remotePatterns: [
             {
                 protocol: 'https',
-                hostname: 'genki-backend.justaddcollagen.com',
+                hostname: 'arced-backend.anonymoustore.com',
                 pathname: '/wp-content/uploads/**',
             },
             {

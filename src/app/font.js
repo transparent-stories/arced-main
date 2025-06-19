@@ -1,14 +1,25 @@
 import localFont from 'next/font/local'
 
-const sentient = localFont({
+const brother = localFont({
     src: [
         {
-            path: './fonts/Sentient-Bold.otf',
+            path: './fonts/Brother-1816.ttf',
             weight: '900',
             style: 'bold',
         }
     ],
-    variable: '--font-sentient'
+    variable: '--font-brother'
 })
 
-export default sentient
+const cera = localFont({
+    src: [
+        {
+            path: './fonts/Cera-1.otf',
+            weight: '500',
+            style: 'regular',
+        }
+    ],
+    variable: '--font-cera'
+})
+
+export default {brother, cera}

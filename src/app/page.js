@@ -1,4 +1,5 @@
 
+import Header from "@/components/Global/Header";
 import { EmptyState, ErrorState } from "@/components/Global/States";
 import ServiceSliderPrac from "@/components/Home/ServiceSliderPrac";
 import { fetchFromApiWp } from "@/utils/api";
@@ -85,17 +86,20 @@ export default async function Home() {
 
 
     return (
-      <>
+      <section className="bg-[url(/home/bg-1.jpg)] bg-black bg-opacity-70 bg-blend-overlay h-[90vh] sm:h-screen flex flex-col justify-end sm:justify-end">
+        <Header />
+
         <div className="flex justify-center">
-          <div className="text-white opacity-50 text-center px-5 mt-5 text-sm sm:w-1/3">
-            {parse(home_page_content)}
+          <div className="text-white text-center px-5 mt-5 text-3xl sm:text-5xl">
+            {/* {parse(home_page_content)} */}
+            {/* <h1>Discover Events Like Never Before</h1> */}
           </div>
         </div>
         {/* <ServicesSlider /> */}
         <ServiceSliderPrac gallery={carouselResult} />
 
         {/* <GsapMotionCarousel /> */}
-      </>
+      </section>
     );
   } catch (error) {
     console.error("Error fetching page data:", error.message || error);
