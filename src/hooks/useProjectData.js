@@ -73,7 +73,7 @@ async function fetchAllProjectsAndCategories(ids) {
     // Ensure "All" category is always present and add slugs if they don't exist
     let finalCategories = [];
     if (!categoriesData || categoriesData.length === 0) {
-      finalCategories = [{ id: 'all', name: 'All Projects', slug: 'all-projects' }];
+      // finalCategories = [{ id: 'all', name: 'All Projects', slug: 'all-projects' }];
     } else {
       // Add 'slug' property to categories if it's missing (important for URL params)
       finalCategories = categoriesData.map(cat => ({

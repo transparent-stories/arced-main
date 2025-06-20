@@ -2,8 +2,13 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion'; // Ensure AnimatePresence is imported
 import ProjectCard from './Project Card/ProjectCard'; // Assuming correct path to ProjectCard
+import { EmptyState } from '../Global/States';
 
 const ProjectList = ({ subCategoryName, projects }) => {
+
+  if (projects.length === 0)
+    return <EmptyState message="No projects available" height="100vh" />;
+
   return (
     // AnimatePresence will wrap the content that needs to animate in/out.
     // In this case, it wraps the entire content of ProjectList,
