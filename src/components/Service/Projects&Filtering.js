@@ -107,8 +107,8 @@ const ProjectsnFiltering = ({ featured_image, content, title, ids }) => {
 
   if (loading) return <LoadingState message="Loading projects and categories..." height="100vh" />;
   if (error) return <EmptyState message={error} height="100vh" />;
-  if (!loading && !error && filteredProjects.length === 0)
-    return <EmptyState message="No projects available" height="100vh" />;
+  // if (!loading && !error && filteredProjects.length === 0)
+  //   return <EmptyState message="No projects available" height="100vh" />;
 
   // Find the active subcategory name based on activeCategory ID
   const activeSubCategoryName =
