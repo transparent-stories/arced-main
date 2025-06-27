@@ -13,7 +13,8 @@ const getPageData = cache(async (id = "199") => {
         const product = await fetchFromApiWp(`/pages/${id}`, queryParams, "wp");
         return product?.data;
     } catch (error) {
-        console.error(`Error fetching page data for distributor`, error);
+        console.error(`Error fetching page data for About`, error.message);
+        
         throw new Error("page not found");
     }
 })
