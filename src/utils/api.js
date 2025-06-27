@@ -15,7 +15,7 @@ const apiWC = axios.create({
         consumer_key: process.env.NEXT_PUBLIC_WP_CONSUMER_KEY,
         consumer_secret: process.env.NEXT_PUBLIC_WP_CONSUMER_SECRET,
     },
-    timeout: 10000, // 10 seconds timeout
+    timeout: 10000, // 10 seconds timeou
 });
 
 export const fetchFromApi = async (endpoint, params = {}, version = "wc") => {
