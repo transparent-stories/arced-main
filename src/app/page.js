@@ -86,13 +86,13 @@ export default async function Home() {
 
 
     return (
-      <section className="bg-[url(/home/bg-1.jpg)] bg-black bg-opacity-70 bg-blend-overlay h-[90vh] sm:h-screen flex flex-col justify-end sm:justify-end">
+      <section className="bg-[url(/home/bg-1.jpg)] bg-black bg-opacity-70 bg-blend-overlay h-[90vh] sm:h-auto flex flex-col items-center justify-end sm:justify-end">
         <Header />
 
-        <div className="flex justify-center">
-          <div className="text-white text-center px-5 mt-5 text-3xl sm:text-5xl">
-            {/* {parse(home_page_content)} */}
-            {/* <h1>Discover Events Like Never Before</h1> */}
+        <div className="flex justify-center mt-64 sm:mt-40 w-10/12 sm:w-1/2">
+          <div className="text-white text-justify px-5 mt-5 text-xs">
+            {parse(home_page_content)}
+            <h1>Discover Events Like Never Before</h1>
           </div>
         </div>
         {/* <ServicesSlider /> */}

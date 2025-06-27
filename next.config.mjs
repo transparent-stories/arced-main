@@ -5,13 +5,14 @@ const nextConfig = {
             {
                 protocol: 'https',
                 hostname: 'arced-backend.anonymoustore.com',
-                pathname: '/wp-content/uploads/**',
+                port: '',
+                pathname: '/wp-content/uploads/**', // Ensure this path correctly matches the image URL pattern
             },
             {
                 protocol: 'https',
                 hostname: 'placehold.co',
                 pathname: '/**',
-            }
+            },
         ],
     },
     webpack(config) {
@@ -23,26 +24,26 @@ const nextConfig = {
 
         return config
     },
-    async redirects() {
-        return [
-            { source: "/about-hikari", destination: "/", permanent: true },
-            { source: "/fun-stuff", destination: "/", permanent: true },
-            { source: "/merchandize", destination: "/", permanent: true },
-            { source: "/japanese-soda", destination: "/", permanent: true },
-            { source: "/melon-ramune-soda", destination: "/", permanent: true },
-            { source: "/genki-ramune-interactive", destination: "/", permanent: true },
-            { source: "/yogurt-soda", destination: "/", permanent: true },
-            { source: "/plain-ramune-soda", destination: "/", permanent: true },
-            { source: "/collagen-ramune-instagram-giveaway", destination: "/", permanent: true },
-            { source: "/500ml-ramune-cans", destination: "/", permanent: true },
-            { source: "/strawberry-ramune-soda", destination: "/", permanent: true },
-            { source: "/blueberry-flavour-ramune-soda", destination: "/", permanent: true },
-            { source: "/collagen-health-ramune", destination: "/", permanent: true },
-            { source: "/pineapple-ramune-soda", destination: "/", permanent: true },
-            { source: "/arabic", destination: "/", permanent: true },
-            { source: "/blog", destination: "/posts", permanent: true },
-        ];
-    }
+    // async redirects() {
+    //     return [
+    //         { source: "/about-hikari", destination: "/", permanent: true },
+    //         { source: "/fun-stuff", destination: "/", permanent: true },
+    //         { source: "/merchandize", destination: "/", permanent: true },
+    //         { source: "/japanese-soda", destination: "/", permanent: true },
+    //         { source: "/melon-ramune-soda", destination: "/", permanent: true },
+    //         { source: "/genki-ramune-interactive", destination: "/", permanent: true },
+    //         { source: "/yogurt-soda", destination: "/", permanent: true },
+    //         { source: "/plain-ramune-soda", destination: "/", permanent: true },
+    //         { source: "/collagen-ramune-instagram-giveaway", destination: "/", permanent: true },
+    //         { source: "/500ml-ramune-cans", destination: "/", permanent: true },
+    //         { source: "/strawberry-ramune-soda", destination: "/", permanent: true },
+    //         { source: "/blueberry-flavour-ramune-soda", destination: "/", permanent: true },
+    //         { source: "/collagen-health-ramune", destination: "/", permanent: true },
+    //         { source: "/pineapple-ramune-soda", destination: "/", permanent: true },
+    //         { source: "/arabic", destination: "/", permanent: true },
+    //         { source: "/blog", destination: "/posts", permanent: true },
+    //     ];
+    // }
 };
 
 export default nextConfig;

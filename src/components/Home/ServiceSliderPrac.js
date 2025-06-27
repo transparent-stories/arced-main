@@ -132,9 +132,10 @@ export default function ServiceSliderPrac({ gallery }) {
             const targetUrl = slideData[index]?.url;
             if (targetUrl) {
                 isNavigatingRef.current = true;
-                setTimeout(() => {
-                    router.push(targetUrl);
-                }, 100);
+                router.push(targetUrl)
+                // setTimeout(() => {
+                //     ;
+                // }, 100);
             }
         } else {
             goToIndex(index);
@@ -214,8 +215,8 @@ export default function ServiceSliderPrac({ gallery }) {
                             ref={(el) => (boxRefs.current[i] = el)}
                         >
                             <motion.div
-                                className={styles['flip-card-inner']}
-                                animate={{ rotateX: flippedIndex === i ? 180 : 0 }}
+                                // className={styles['flip-card-inner']}
+                                // animate={{ rotateX: flippedIndex === i ? 180 : 0 }}
                                 transition={{ duration: 0.4, type: 'spring', stiffness: 100, damping: 20 }}
                                 style={{ transformStyle: 'preserve-3d' }}
                                 onClick={() => handleCardInteraction(i)}
@@ -230,7 +231,7 @@ export default function ServiceSliderPrac({ gallery }) {
                                 }}
                                 ref={(el) => (innerFlipRefs.current[i] = el)}
                             >
-                                <div className="flip-card-front">
+                                <div>
                                     <img src={slideData[i]?.image} alt={slideData[i]?.frontText} className="w-full h-full object-cover rounded-2xl" />
                                 </div>
                                 <div className="flip-card-back">
