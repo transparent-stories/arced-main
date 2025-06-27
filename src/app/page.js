@@ -89,10 +89,9 @@ export default async function Home() {
       <section className="bg-[url(/home/bg-1.jpg)] bg-black bg-opacity-70 bg-blend-overlay h-[90vh] sm:h-auto flex flex-col items-center justify-end sm:justify-end">
         <Header />
 
-        <div className="flex justify-center mt-64 sm:mt-40 w-10/12 sm:w-1/2">
+        <div className="flex justify-center mt-64 sm:mt-40 w-full sm:w-1/2">
           <div className="text-white text-justify px-5 mt-5 text-xs">
             {parse(home_page_content)}
-            <h1>Discover Events Like Never Before</h1>
           </div>
         </div>
         {/* <ServicesSlider /> */}
