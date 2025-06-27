@@ -51,10 +51,11 @@ const Testing = () => {
                             <p className="mt-2">
                                 Please check:
                                 <ul>
+                                    {/* FIX APPLIED HERE */}
                                     <li>1. Is the API endpoint `{API_ENDPOINT}` correct and active?</li>
                                     <li>2. Are there CORS issues (check browser console)?</li>
                                     <li>3. Is the backend server (on `arced-backend.anonymoustore.com`) fully operational and serving API requests?</li>
-                                    <li>4. Your mobile device's network connection.</li>
+                                    <li>4. Your mobile device&apos;s network connection.</li> {/* Changed this line for the apostrophe in "device's" */}
                                 </ul>
                             </p>
                         </div>
