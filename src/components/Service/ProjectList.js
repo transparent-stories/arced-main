@@ -32,11 +32,11 @@ const ProjectList = ({ subCategoryName, projects }) => {
           // This inner motion.div handles the horizontal scrolling container.
           // Its own initial/animate are still valid for its content's appearance if desired.
           // You could even stagger the ProjectCards here if you want.
-          className="flex flex-nowrap items-center justify-start gap-4 p-4 mb-10 overflow-x-auto
+          className={`flex flex-nowrap items-center gap-4 p-4 mb-10 overflow-x-auto ${projects.length<=3 && "justify-center"}
             [&::-webkit-scrollbar]:w-2
             [&::-webkit-scrollbar-track]:bg-transparent
             [&::-webkit-scrollbar-thumb]:bg-gray-700
-          "
+          `}
           initial={{ opacity: 0 }} // Initial state for the cards container
           animate={{ opacity: 1 }} // Animate to full opacity
           transition={{ delay: 0.2, duration: 0.5 }} // Slight delay after the main component appears

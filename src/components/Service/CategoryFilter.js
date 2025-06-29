@@ -22,11 +22,11 @@ const CategoryFilter = ({ featured_image, categories, handleCategoryFilter, acti
       // Added `flex-nowrap` explicitly, though `flex` implies it by default without `flex-wrap`.
       // `items-center` for vertical alignment of buttons.
       // `justify-start` ensures content starts from the left, which is typical for horizontal scrolls.
-      className="flex flex-nowrap items-center justify-center gap-4 p-4 mb-10 overflow-x-auto 
+      className={`flex flex-nowrap items-center ${categories.length<=3 && "justify-center"} gap-4 p-4 mb-10 overflow-x-auto 
         [&::-webkit-scrollbar]:w-2
       [&::-webkit-scrollbar-track]:bg-transparent
-      [&::-webkit-scrollbar-thumb]:bg-gray-700
-      "
+      [&::-webkit-scrollbar-thumb]:bg-gray-700`}
+      style={{}}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.1 }}
