@@ -47,7 +47,7 @@ export const useCarouselRotation = (containerRef, totalSlides, step) => {
                 setActiveIndex(calculateActiveIndex(currentAnimatedRotation));
             },
             onComplete: () => startAutoplay(), // Loop the autoplay
-            delay: 2.5 // Delay before the next slide rotates
+            delay: 7 // Delay before the next slide rotates
         });
     }, [step, calculateActiveIndex, containerRef]);
 
