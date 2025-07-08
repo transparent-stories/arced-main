@@ -45,7 +45,7 @@ const ProjectList = ({ subCategoryName, projects }) => {
           {shouldShowArrows && (
             <button
               onClick={() => scroll(-300)} // Scroll left by 300px
-              className="absolute left-2 z-10 p-2 bg-gray-800 bg-opacity-75 rounded-full text-white cursor-pointer hover:bg-opacity-100 transition-opacity duration-300 transform -translate-y-1/2 top-1/2 md:flex hidden" // Hide on small screens if desired
+              className=" left-2 z-10 p-2 bg-gray-800 bg-opacity-75 rounded-full text-white cursor-pointer hover:bg-opacity-100 transition-opacity duration-300 transform -translate-y-1/2 top-1/2 md:flex hidden" // Hide on small screens if desired
               aria-label="Scroll left"
             >
               <FaChevronLeft size={20} />
@@ -74,7 +74,7 @@ const ProjectList = ({ subCategoryName, projects }) => {
           {shouldShowArrows && (
             <button
               onClick={() => scroll(300)} // Scroll right by 300px
-              className="absolute right-2 z-10 p-2 bg-gray-800 bg-opacity-75 rounded-full text-white cursor-pointer hover:bg-opacity-100 transition-opacity duration-300 transform -translate-y-1/2 top-1/2 md:flex hidden" // Hide on small screens if desired
+              className=" right-2 z-10 p-2 bg-gray-800 bg-opacity-75 rounded-full text-white cursor-pointer hover:bg-opacity-100 transition-opacity duration-300 transform -translate-y-1/2 top-1/2 md:flex hidden" // Hide on small screens if desired
               aria-label="Scroll right"
             >
               <FaChevronRight size={20} />

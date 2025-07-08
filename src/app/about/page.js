@@ -3,6 +3,7 @@ import HeaderOpaque from '@/components/Global/HeaderOpaque'
 import { fetchFromApiWp } from '@/utils/api';
 import React, { cache }  from 'react'
 import Image from 'next/image';
+import TeamMembers from '@/components/About/TeamMembers';
 
 const queryParams = { _fields: "id,title,acf", acf_format: "standard", status: "publish", id: '199' };
 
@@ -53,13 +54,15 @@ const About = async () => {
         title: { rendered: title },
         acf: {
             content,
-            client_logos = []
+            client_logos = [],
+            team_members = []
         }
     } = page;
 
     return (
         <div>
             <HeaderOpaque header_text="About Us" />
+            
             <section className='py-5 flex flex-col items-center'>
                 {/* <div className='py-5 text-center h-[70vh] flex flex-col gap-10 justify-center max-w-5xl'>
                     <h3 className='text-3xl'>
@@ -78,6 +81,8 @@ const About = async () => {
                         __html: content ?? ''
                     }}
                 />
+
+                <TeamMembers teamMembers={team_members} />
 
                 <section className='w-full px-6 py-12 bg-black text-white'>
                     <h3 className='text-3xl text-center mb-10'>Client Showcase</h3>

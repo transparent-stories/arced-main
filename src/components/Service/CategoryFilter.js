@@ -39,7 +39,7 @@ const CategoryFilter = ({ featured_image, categories, handleCategoryFilter, acti
         {shouldShowArrows && (
           <button
             onClick={() => scroll(-300)}
-            className="absolute left-0 z-10 p-2 bg-gray-800 bg-opacity-75 rounded-full text-white cursor-pointer hover:bg-opacity-100 transition-opacity duration-300 transform -translate-y-1/2 top-1/2 md:flex hidden"
+            className=" left-0 z-10 p-2 bg-gray-800 bg-opacity-75 rounded-full text-white cursor-pointer hover:bg-opacity-100 transition-opacity duration-300 transform -translate-y-1/2 top-1/2 md:flex hidden"
             aria-label="Scroll categories left"
           >
             <FaChevronLeft size={20} />
@@ -106,7 +106,7 @@ const CategoryFilter = ({ featured_image, categories, handleCategoryFilter, acti
         {shouldShowArrows && (
           <button
             onClick={() => scroll(300)}
-            className="absolute right-0 z-10 p-2 bg-gray-800 bg-opacity-75 rounded-full text-white cursor-pointer hover:bg-opacity-100 transition-opacity duration-300 transform -translate-y-1/2 top-1/2 md:flex hidden"
+            className=" right-0 z-10 p-2 bg-gray-800 bg-opacity-75 rounded-full text-white cursor-pointer hover:bg-opacity-100 transition-opacity duration-300 transform -translate-y-1/2 top-1/2 md:flex hidden"
             aria-label="Scroll categories right"
           >
             <FaChevronRight size={20} />
