@@ -39,7 +39,7 @@ const TeamMembers = ({ teamMembers }) => {
 
   return (
     <div className="relative w-full overflow-hidden">
-        <h3 className='text-3xl text-center mb-10'>Team Members</h3>
+        <h3 className='text-3xl text-center mb-10'>Leadership Team</h3>
       <div className="relative flex items-center justify-center">
         {/* Left Scroll Arrow */}
         {shouldShowArrows && (
