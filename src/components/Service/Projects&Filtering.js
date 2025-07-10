@@ -1,4 +1,3 @@
-// ProjectsnFiltering.js
 'use client';
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -14,8 +13,11 @@ const ProjectsnFiltering = ({ featured_image, content, title, ids }) => {
   const searchParams = useSearchParams();
 
   const { loading, error, projects, categories } = useProjectsData(ids);
+  // Initialize filteredProjects as empty, they will only show once a category is selected (or 'all')
   const [filteredProjects, setFilteredProjects] = useState([]);
-  const [activeCategory, setActiveCategory] = useState(null); // Stores the category ID or 'all'
+  // activeCategory starts as null. This signifies that no specific filter is applied initially,
+  // and thus no projects are displayed.
+  const [activeCategory, setActiveCategory] = useState(null);
 
   // Helper function to slugify a string - memoized with useCallback for stability
   const slugify = useCallback((text) => {
@@ -29,27 +31,24 @@ const ProjectsnFiltering = ({ featured_image, content, title, ids }) => {
       .replace(/\s+/g, '-') // Replace spaces with -
       .replace(/[^\w-]+/g, '') // Remove all non-word chars except hyphens
       .replace(/--+/g, '-'); // Replace multiple - with single -
-  }, []); // Empty dependency array means this function is created once
+  }, []);
 
-  // Effect to manage active category, filtered projects, and URL synchronization
+  // Effect to manage active category and filtered projects based on URL or initial state
   useEffect(() => {
-    // If projects data is not yet available, don't attempt to filter or set state.
-    // This also covers initial loading and cases where `useProjectsData` might return an empty `projects` array initially.
-    if (projects.length === 0) {
-      // Ensure state is cleared or reflects loading status
-      if (filteredProjects.length !== 0) setFilteredProjects([]);
-      if (activeCategory !== null) setActiveCategory(null);
+    // Don't process until data is loaded
+    if (loading) {
       return;
     }
 
     const categorySlugFromUrl = searchParams.get('category');
-    let newActiveCategory = 'all'; // Default active category to 'all'
-    let newFilteredProjects = projects; // Default filtered projects to all projects
+    let newActiveCategory = null; // Default to no active button
+    let newFilteredProjects = []; // Default to no projects shown
 
-    let shouldUpdateUrl = false; // Flag to indicate if router.replace is needed
-    let targetUrlParams = new URLSearchParams(searchParams.toString()); // Start with current URL params
+    // Flag to track if URL needs cleanup/update
+    let shouldUpdateUrl = false;
+    const currentUrlParams = new URLSearchParams(searchParams.toString());
 
-    // Logic to determine the target active category and filtered projects
+
     if (categorySlugFromUrl) {
       if (categories.length > 0) {
         const foundCategory = categories.find(
@@ -60,107 +59,106 @@ const ProjectsnFiltering = ({ featured_image, content, title, ids }) => {
           newActiveCategory = foundCategory.id;
           newFilteredProjects = projects.filter((project) => project.categories.includes(foundCategory.id));
         } else if (categorySlugFromUrl === 'all-projects' || categorySlugFromUrl === 'all') {
-          // If URL has 'all-projects' or 'all', and we prefer a clean URL (no param for 'all' state)
           newActiveCategory = 'all';
           newFilteredProjects = projects;
-          if (targetUrlParams.has('category')) { // If there's any category param set, we want to clear it for 'all'
+          // If URL has 'all-projects' or 'all', remove the param for a cleaner URL
+          if (currentUrlParams.has('category')) {
             shouldUpdateUrl = true;
-            targetUrlParams.delete('category');
+            currentUrlParams.delete('category');
           }
         } else {
-          // Invalid category slug in URL: mark for cleanup and default to 'all'
+          // Invalid category slug in URL: clean up URL, no active category, no projects displayed
           shouldUpdateUrl = true;
-          targetUrlParams.delete('category'); // Remove the invalid param
-          newActiveCategory = 'all';
-          newFilteredProjects = projects;
+          currentUrlParams.delete('category');
+          // newActiveCategory remains null, newFilteredProjects remains empty []
         }
       } else {
-        // categorySlugFromUrl exists, but no categories data available: mark for cleanup and default to 'all'
+        // categorySlugFromUrl exists, but no categories data.
+        // If there are projects, display all of them regardless of the invalid param.
         shouldUpdateUrl = true;
-        targetUrlParams.delete('category'); // Remove the category param
-        newActiveCategory = 'all';
+        currentUrlParams.delete('category'); // Clean up the invalid param
+        newActiveCategory = 'all'; // Treat as if 'all' is implicitly selected
         newFilteredProjects = projects;
       }
     } else {
-      // No category param in URL: ensure that no category param is lingering for the 'all' state.
-      if (targetUrlParams.has('category')) {
-         shouldUpdateUrl = true;
-         targetUrlParams.delete('category');
+      // No category param in URL.
+      // If there are no categories at all, display all projects by default.
+      if (categories.length === 0 && projects.length > 0) {
+        newActiveCategory = 'all';
+        newFilteredProjects = projects;
       }
+      // Otherwise (categories exist, no URL param), newActiveCategory remains null, newFilteredProjects remains [].
+      // This is the initial state where no projects are shown.
     }
 
-    // --- Perform URL update only if necessary ---
-    // Compare the string representation of current searchParams with target searchParams
-    if (shouldUpdateUrl && searchParams.toString() !== targetUrlParams.toString()) {
-      router.replace(`${location.pathname}?${targetUrlParams.toString()}`, { scroll: false });
+    // --- Perform URL cleanup/update only if necessary ---
+    // Only call router.replace if the searchParams string actually differs
+    if (shouldUpdateUrl && searchParams.toString() !== currentUrlParams.toString()) {
+      router.replace(`${location.pathname}?${currentUrlParams.toString()}`, { scroll: false });
     }
 
     // --- Update component state only if there's a change ---
-    // This is crucial to prevent unnecessary re-renders that could contribute to a loop.
+    // This is crucial to prevent unnecessary re-renders and potential loops.
     if (activeCategory !== newActiveCategory) {
       setActiveCategory(newActiveCategory);
     }
-    // For array comparison, `JSON.stringify` is a simple way to check content equality.
-    // For larger arrays or complex objects, consider a dedicated deep equality function.
+    // For array comparison, JSON.stringify is a simple way to check content equality.
     if (JSON.stringify(filteredProjects) !== JSON.stringify(newFilteredProjects)) {
       setFilteredProjects(newFilteredProjects);
     }
 
-  }, [projects, categories, searchParams, router, activeCategory, filteredProjects, slugify]); // Include all external values used in the effect.
-                                                                                               // activeCategory and filteredProjects are used for comparison, so they are dependencies.
+  }, [projects, categories, searchParams, router, slugify, loading]);
 
   // Memoized function for updating URL and state when a category is clicked
   const handleCategoryFilter = useCallback((categoryId) => {
-    setActiveCategory(categoryId); // Update activeCategory state immediately
+    // Immediately update activeCategory and filteredProjects based on click
+    setActiveCategory(categoryId);
 
+    const filtered =
+      categoryId === 'all' || categories.length === 0
+        ? projects // Show all projects if 'all' is selected or no categories exist
+        : projects.filter((project) => project.categories.includes(categoryId));
+    setFilteredProjects(filtered);
+
+    // Prepare URL for update
     const currentPath = location.pathname;
-    const newParams = new URLSearchParams(searchParams.toString());
+    const newParams = new URLSearchParams(); // Start with empty to build fresh params
 
     if (categoryId && categoryId !== 'all') {
       const categoryName = categories.find(cat => cat.id === categoryId)?.name;
       if (categoryName) {
-        const categorySlug = slugify(categoryName);
-        newParams.set('category', categorySlug);
-      } else {
-        newParams.delete('category'); // Fallback if categoryId is somehow invalid
+        newParams.set('category', slugify(categoryName));
       }
-    } else {
-      newParams.delete('category'); // For 'all' or null, remove the category parameter
     }
+    // If categoryId is 'all' or invalid, newParams will remain empty, effectively removing 'category' param
 
-    // Update URL, preventing scroll to top and shallow navigation
+    // Update URL, preventing scroll to top and using shallow navigation
+    // This will cause useEffect to re-run on the next render cycle with updated searchParams
     router.push(`${currentPath}?${newParams.toString()}`, { shallow: true, scroll: false });
 
-    // Filter projects based on the new category ID
-    setFilteredProjects(
-      categoryId === 'all' || categories.length === 0
-        ? projects // Show all projects if 'all' is selected or no categories exist
-        : projects.filter((project) => project.categories.includes(categoryId))
-    );
-  }, [projects, categories, searchParams, router, slugify]); // Dependencies for useCallback
+  }, [projects, categories, router, slugify]);
 
-  // Handle back button (resets to 'all' projects view)
+  // Handle back button (resets to 'no active filter' view, which means no projects)
   const handleBackButton = useCallback(() => {
-    setActiveCategory('all'); // Set activeCategory to 'all' to show the general filter view
-    const currentPath = location.pathname;
-    const newParams = new URLSearchParams(searchParams.toString());
-    newParams.delete('category'); // Remove the category parameter from URL
+    setActiveCategory(null); // Set activeCategory to null (no button active)
+    setFilteredProjects([]); // Clear projects list
 
-    // Update URL, preventing scroll to top and shallow navigation
+    // Clear category param from URL
+    const currentPath = location.pathname;
+    const newParams = new URLSearchParams(); // Start empty to clear params
     router.push(`${currentPath}?${newParams.toString()}`, { shallow: true, scroll: false });
 
-    setFilteredProjects(projects); // Reset filtered projects to all
-  }, [searchParams, router, projects]); // Dependencies for useCallback
+  }, [router]);
 
   // --- Render based on loading/error states ---
   if (loading) return <LoadingState message="Loading projects and categories..." height="100vh" />;
   if (error) return <ErrorState message={error} height="100vh" />;
 
-  // Find the active subcategory name based on activeCategory ID
+  // Determine the title for the project list (e.g., "All Projects", "Category Name")
   const activeSubCategoryName =
     activeCategory === 'all'
       ? 'All Projects'
-      : categories.find((cat) => cat.id === activeCategory)?.name || 'All Projects'; // Fallback for safety
+      : categories.find((cat) => cat.id === activeCategory)?.name || 'Projects'; // Default to 'Projects'
 
   return (
     <div className="max-w-7xl bg-[url(/service/bg-2.jpg)] bg-black bg-opacity-70 bg-cover bg-blend-overlay mx-auto px-4 py-8 flex flex-col">
@@ -175,8 +173,7 @@ const ProjectsnFiltering = ({ featured_image, content, title, ids }) => {
       {/* Conditional rendering for the filtering UI (CategoryFilter or Back button) */}
       {categories.length > 0 ? ( // Only render filter/back button if categories exist
         <AnimatePresence mode="wait">
-          {activeCategory === null || activeCategory === 'all' ? (
-            // Show CategoryFilter when no specific category is active (or 'all' is active by default)
+          {activeCategory === null ? ( // Show CategoryFilter ONLY when activeCategory is null (initial state)
             <motion.div
               key="category-filter"
               initial={{ opacity: 0, y: -20 }}
@@ -189,11 +186,10 @@ const ProjectsnFiltering = ({ featured_image, content, title, ids }) => {
                 featured_image={featured_image}
                 categories={categories}
                 handleCategoryFilter={handleCategoryFilter}
-                activeCategory={activeCategory} // Pass the current activeCategory ('null' or 'all')
+                activeCategory={activeCategory} // Pass the current activeCategory (null)
               />
             </motion.div>
-          ) : (
-            // Show Back to Categories button when a specific category is selected
+          ) : ( // Show Back to Categories button when ANY category (including 'all') is selected
             <motion.div
               key="back-button"
               initial={{ opacity: 0, y: 20 }}
@@ -227,14 +223,24 @@ const ProjectsnFiltering = ({ featured_image, content, title, ids }) => {
           )}
         </AnimatePresence>
       ) : (
-        // If no categories exist, directly show the ProjectList without filter/back button
-        <ProjectList subCategoryName={activeSubCategoryName} projects={filteredProjects} />
+        // **REMOVED:** Direct rendering of ProjectList when no categories exist.
+        // This is now handled by the activeCategory !== null block below.
+        null // Render nothing here when categories.length is 0.
       )}
 
-      {/* Render ProjectList only when a specific category is selected (not 'all' or null for category filter)
-          This ensures ProjectList is only shown *after* a category is picked or if there are no categories at all. */}
-      {categories.length > 0 && activeCategory !== null && activeCategory !== 'all' && (
-        <ProjectList subCategoryName={activeSubCategoryName} projects={filteredProjects} />
+      {/* Render ProjectList only when activeCategory is 'all' OR a specific category ID (i.e., not null) */}
+      {/* It will NOT render when activeCategory is null (initial load or "back" clicked) */}
+      {activeCategory !== null && (
+        filteredProjects.length > 0 ? (
+          <ProjectList subCategoryName={activeSubCategoryName} projects={filteredProjects} />
+        ) : (
+          // Display empty state if no projects match the current filter
+          <EmptyState message={`No projects found for "${activeSubCategoryName}".`} />
+        )
+      )}
+      {/* Show initial guiding message when no projects are displayed and there are categories to choose from */}
+      {activeCategory === null && categories.length > 0 && (
+        <EmptyState message="Please select a category or click 'All Projects' to view projects." />
       )}
     </div>
   );
